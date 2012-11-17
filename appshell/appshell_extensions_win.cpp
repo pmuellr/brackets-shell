@@ -785,7 +785,12 @@ time_t FiletimeToTime(FILETIME const& ft) {
 }
 
 int32 ShowFolderInOSWindow(ExtensionString pathname) {
-    ShellExecute(NULL, L"open", pathname.c_str(), NULL, NULL, SW_SHOWDEFAULT);
+    ConvertToNativePath(pathname);
+    ITEMIDLIST *pidl = ILCreateFromPath(pathname.c_str());
+    if (pidl) {
+        SHOpenFolderAndSelectItems(pidl,0,0,0);
+        ILFree(pidl);
+    }
     return NO_ERROR;
 }
 
